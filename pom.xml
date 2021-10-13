@@ -14,7 +14,7 @@
     <name>SchoolExamAPI</name>
     <description>SchoolExamAPI</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>6</java.version>
     </properties>
     <dependencies>
         <dependency>

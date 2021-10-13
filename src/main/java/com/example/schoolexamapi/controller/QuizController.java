@@ -19,6 +19,29 @@ public class QuizController {
     @Autowired
     private QuizService service;
 
+    // For teachers
+    @PostMapping("/addQuiz")
+    public Quiz addQuiz(@RequestBody Quiz quiz) {
+        return service.addQuiz(quiz);
+    }
+
+    @PostMapping("/get")
+    public List<Quiz> getQuizzesByAssignedBy(@RequestParam long assignedBy) {
+        return service.getQuizzesByAssignedBy(assignedBy);
+    }
+
+    @PostMapping("/addQuestions")
+    public List<Questions> addQuestionsForQuiz(@RequestBody List<Questions> questions, @RequestParam long quizId) {
+        return service.addQuestionsForQuiz(questions, quizId);
+    }
+
+    @PostMapping("/addQuestion")
+    public Questions addQuestionForQuiz(@RequestBody Questions question) {
+        return service.addQuestionForQuiz(question);
+    }
+
+
+    // For Students
     @GetMapping("/details/{quizId}")
     public Quiz getQuizById(@PathVariable long quizId) {
         return service.getQuizById(quizId);
@@ -30,7 +53,7 @@ public class QuizController {
     }
 
     @GetMapping("/{quizId}")
-    public List<Questions> getQuestionsForQuiz(@PathVariable long quizId) {
+        public List<Questions> getQuestionsForQuiz(@PathVariable long quizId) {
         return service.getQuestionsByQuizId(quizId);
     }
 

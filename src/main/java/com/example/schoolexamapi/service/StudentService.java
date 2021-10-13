@@ -1,5 +1,6 @@
 package com.example.schoolexamapi.service;
 
+import com.example.schoolexamapi.entity.Quiz;
 import com.example.schoolexamapi.entity.QuizzesStudent;
 import com.example.schoolexamapi.entity.Student;
 import com.example.schoolexamapi.entity.StudentResponse;
@@ -9,6 +10,7 @@ import com.example.schoolexamapi.repository.StudentResponseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,5 +41,19 @@ public class StudentService {
     // for use by teachers
     public Student getStudentByRollNo(long roll) {
         return studentRepo.findById(roll).orElse(null);
+    }
+
+    public void assignQuizToClass(long quizId, int schoolClass) {
+        List<Student> students = studentRepo.findBySchoolClass(schoolClass);
+        List<QuizzesStudent> quizzesStudents = new ArrayList<>();
+        for (Student student : students) {
+            QuizzesStudent quizzesStudent = new QuizzesStudent();
+            quizzesStudent.setQuizId(quizId);
+            quizzesStudent.setStudentRoll(student.getRollNo());
+            quizzesStudent.setMarksObtained(-3);
+            quizzesStudents.add(quizzesStudent);
+        }
+        quizzesStudentRepo.saveAll(quizzesStudents);
+
     }
 }

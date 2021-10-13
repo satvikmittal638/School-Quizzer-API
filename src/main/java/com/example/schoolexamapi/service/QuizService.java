@@ -24,7 +24,28 @@ public class QuizService {
     @Autowired
     private StudentResponseRepo studentResponseRepo; // for handling answers
 
+    // For Teachers
+    public Quiz addQuiz(Quiz quiz) {
+        return quizRepo.save(quiz);
+    }
 
+    public List<Quiz> getQuizzesByAssignedBy(long assignedBy) {
+        return quizRepo.findByAssignedBy(assignedBy);
+    }
+
+    public List<Questions> addQuestionsForQuiz(List<Questions> questions, long quizId) {
+        for(Questions question: questions){
+            question.setQuizId(quizId);
+        }
+        return questionsRepo.saveAll(questions);
+    }
+
+    public Questions addQuestionForQuiz(Questions question) {
+        return questionsRepo.save(question);
+    }
+
+
+    // For Students
     public Quiz getQuizById(long quizId) {
         return quizRepo.findById(quizId).orElse(null);
     }

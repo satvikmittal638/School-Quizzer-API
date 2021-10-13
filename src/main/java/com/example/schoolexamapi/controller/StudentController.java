@@ -15,7 +15,7 @@ public class StudentController {
     private StudentService service;
 
     @PostMapping("/login") // post mapping to hide any params and provide additional security
-    public Student loginStudent(@RequestParam(name = "roll") long roll, @RequestParam(name = "password") String password) {
+    public Student loginStudent(@RequestParam long roll, @RequestParam String password) {
         return service.getStudentByRollAndPwd(roll, password);// password is excluded from the JSON response
     }
 
@@ -24,6 +24,10 @@ public class StudentController {
         service.uploadAnswers(responseList);
     }
 
+    @PostMapping("/assign")
+    public void assignQuizToClass(@RequestParam long quizId, @RequestParam int schoolClass){
+        service.assignQuizToClass(quizId, schoolClass);
+    }
     @GetMapping("/get")
     public Student getStudentByRollAndClass(@RequestParam(name = "roll") long roll) {
         return service.getStudentByRollNo(roll);

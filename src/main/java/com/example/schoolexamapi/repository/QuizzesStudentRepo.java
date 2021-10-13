@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface QuizzesStudentRepo extends JpaRepository<QuizzesStudent, Long> {
 
-
     List<QuizzesStudent> findByStudentRoll(long roll);
 
 //    QuizzesStudent findByStudentRoll(long roll);
