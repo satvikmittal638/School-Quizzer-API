@@ -22,6 +22,7 @@ public class StudentResponse {
 
     private long studentRoll; // for identification of individual student
     private char optionSelected;
+    private int timeTakenInSec;
 
 
 }

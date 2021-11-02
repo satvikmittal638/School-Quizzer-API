@@ -20,7 +20,7 @@ public class QuizzesStudent {
     @Column(nullable = false)
     private long quizId,studentRoll; // multiple quiz-student relations might exist
 
-//    private String type;
+
 
     // -3 implies that quiz is unattempted
     // -2 implies that quiz is attempted but not successfully submitted(in case of switch off or app kill)

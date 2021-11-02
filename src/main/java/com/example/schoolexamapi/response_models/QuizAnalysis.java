@@ -16,6 +16,4 @@ public class QuizAnalysis {
     private List<Student> leaderBoard;
     private long[][] marksFrequencyTable;
     private long attemptRateInPercent; // % of students who attempted the quiz out of all
-    private long accuracyInPercent;
-
 }

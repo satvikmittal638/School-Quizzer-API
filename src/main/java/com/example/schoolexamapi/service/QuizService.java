@@ -34,7 +34,7 @@ public class QuizService {
     }
 
     public List<Questions> addQuestionsForQuiz(List<Questions> questions, long quizId) {
-        for(Questions question: questions){
+        for (Questions question : questions) {
             question.setQuizId(quizId);
         }
         return questionsRepo.saveAll(questions);
@@ -63,28 +63,33 @@ public class QuizService {
         List<Quiz> attemptedQuizzes = new ArrayList<>();
         List<Quiz> liveQuizzes = new ArrayList<>();
         List<Quiz> upcomingQuizzes = new ArrayList<>();
+
         // Finding the quizzes by matching the id from the info and adding it to the quizzes list
         for (QuizzesStudent info : quizStudentInfos) {
             Quiz quiz = quizRepo.findById(info.getQuizId()).orElse(null);
             int marksObtained = info.getMarksObtained();
 
 
-            // classifying acc to their types
-            if (marksObtained >= 0) {
-                attemptedQuizzes.add(quiz);
-            }
-            // for upcoming, missed and live marks = -3
-            else if (marksObtained == -3) {
+            if (quiz != null) {
+                // Classifying quizzes according to their types
 
-                LocalDateTime now = LocalDateTime.now();
-                if (now.isAfter(quiz.getDateTimeFrom()) && now.isBefore(quiz.getDateTimeTo())) {
-                    liveQuizzes.add(quiz);
-                } else if (now.isBefore(quiz.getDateTimeFrom())) {
-                    upcomingQuizzes.add(quiz);
-                } else if (now.isAfter(quiz.getDateTimeTo())) {
-                    missedQuizzes.add(quiz);
+                if (marksObtained >= 0) {
+                    attemptedQuizzes.add(quiz);
                 }
+                // for unattempted quizzes marks = -3
+                else if (marksObtained == -3) {
 
+                    LocalDateTime now = LocalDateTime.now();
+                    // if the current datetime is after the start time and before the end time
+                    if (now.isAfter(quiz.getDateTimeFrom()) && now.isBefore(quiz.getDateTimeTo())) {
+                        liveQuizzes.add(quiz);
+                    } else if (now.isBefore(quiz.getDateTimeFrom())) { // if current time is before the start time
+                        upcomingQuizzes.add(quiz);
+                    } else if (now.isAfter(quiz.getDateTimeTo())) { // if current time is after the start time
+                        missedQuizzes.add(quiz);
+                    }
+
+                }
             }
         }
 
@@ -115,11 +120,10 @@ public class QuizService {
      * @param schoolClass Class whose result is to be evaluated
      */
     public void evaluateResult(long quizId, int schoolClass) {
-        // getting all the roll no of all students of a class
-        List<Long> rollNos = studentResponseRepo.getAllRollNosByClass(schoolClass);
+        List<Long> allRollNos = studentResponseRepo.getAllRollNosByClass(schoolClass);
         List<Questions> questions = questionsRepo.findByQuizId(quizId);// questions remain same for all
 
-        for (long rollNo : rollNos) {
+        for (long rollNo : allRollNos) {
             // Calculating score of each student
             List<StudentResponse> answers = studentResponseRepo.findByStudentRollAndQuizId(rollNo, quizId);
             int score = getIndividualScore(questions, answers);
@@ -134,6 +138,7 @@ public class QuizService {
 
     private int getIndividualScore(List<Questions> questions, List<StudentResponse> answers) {
         int score = 0;
+        // matching the ans for each question
         for (int i = 0; i < questions.size(); i++) {
             Questions question = questions.get(i);
             StudentResponse answer = answers.get(i);
@@ -152,18 +157,19 @@ public class QuizService {
     public QuizAnalysis getQuizAnalysis(long quizId) {
         QuizAnalysis analysis = new QuizAnalysis();
         List<Student> leaderBoard = new ArrayList<>();
-        // Getting top scorers and their details
+        // Getting top scorers along with their details from the students table
         for (long roll : quizzesStudentRepo.getLeaderboardByQuiz(quizId)) {
             leaderBoard.add(studentRepo.findById(roll).orElse(null));
         }
 
-        // Calculating attemption rate
+        // Calculating attempting rate
         long allQuizzesCount = quizzesStudentRepo.countAllByQuizId(quizId),
                 attemptedQuizCount = quizzesStudentRepo.getAttemptedCountByQuizId(quizId);
         long attemptionRate = Math.floorDiv(attemptedQuizCount * 100, allQuizzesCount);
 
-        // preparing frequency distribution table
+        // Preparing frequency distribution table(marks, no of student who obtained those marks)
         long[][] table = quizzesStudentRepo.getMarksAndFrequency(quizId);
+
 
         // Populating analysis object
         analysis.setClassMarksAvg(quizzesStudentRepo.getQuizAvg(quizId));

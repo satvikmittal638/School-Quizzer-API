@@ -10,13 +10,14 @@ public interface QuizzesStudentRepo extends JpaRepository<QuizzesStudent, Long> 
 
     List<QuizzesStudent> findByStudentRoll(long roll);
 
-//    QuizzesStudent findByStudentRoll(long roll);
 
     QuizzesStudent findByQuizIdAndStudentRoll(long quizId, long studentRoll);
 
-    // considering 0 marks student for mean calculation purposes
-    @Query("SELECT AVG(marksObtained) FROM QuizzesStudent WHERE quizId=?1 AND marksObtained >= 0")
+
+    List<QuizzesStudent> findByQuizId(long quizId);
+
     // to eliminate the students who haven't attempted the quiz
+    @Query("SELECT AVG(marksObtained) FROM QuizzesStudent WHERE quizId=?1 AND marksObtained >= 0")
     float getQuizAvg(long quizId);
 
     @Query("SELECT studentRoll FROM QuizzesStudent WHERE quizId=?1 AND marksObtained>=0 ORDER BY marksObtained DESC")
@@ -27,7 +28,7 @@ public interface QuizzesStudentRepo extends JpaRepository<QuizzesStudent, Long> 
 
 
     @Query("SELECT COUNT(studentRoll) FROM QuizzesStudent WHERE quizId=?1 AND marksObtained >= 0")
-        // marks = -2 if quiz is unattempted
+        // marks = -3 if quiz is unattempted
     int getAttemptedCountByQuizId(long quizId);
 
 
